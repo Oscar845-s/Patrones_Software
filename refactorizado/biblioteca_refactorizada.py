@@ -1,28 +1,9 @@
-# ============================================================
-# SISTEMA DE GESTIÓN DE BIBLIOTECA — CÓDIGO REFACTORIZADO
-# ============================================================
-# Patrones aplicados:
-#   1. SINGLETON   — CatalogoBiblioteca (una sola instancia global)
-#   2. STRATEGY    — Cálculo de multas y días de préstamo por tipo de usuario
-#   3. OBSERVER    — Notificaciones desacopladas de la lógica de negocio
-#
-# Principios SOLID aplicados:
-#   S — Single Responsibility: cada clase tiene una única responsabilidad
-#   O — Open/Closed: nuevos tipos de usuario = nueva Strategy, sin tocar código existente
-#   D — Dependency Inversion: clases dependen de abstracciones (interfaces), no implementaciones
-# ============================================================
-
 import datetime
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-
-# ============================================================
 # CONSTANTES
 # CODE SMELL corregido: Magic Numbers
-# Antes: días y tarifas hardcodeadas (14, 7, 21, 5, 3, 1) dentro de los métodos.
-# Solución: nombrarlas como constantes con significado explícito.
-# ============================================================
 
 DIAS_PRESTAMO_NORMAL     = 14
 DIAS_PRESTAMO_ESTUDIANTE = 7
@@ -32,13 +13,8 @@ MULTA_DIARIA_NORMAL      = 5
 MULTA_DIARIA_ESTUDIANTE  = 3
 MULTA_DIARIA_VIP         = 1
 
-
-# ============================================================
 # MODELOS DE DATOS
 # CODE SMELL corregido: God Class
-# Antes: un diccionario plano dentro de Biblioteca para representar libros/usuarios.
-# Solución: clases dedicadas con responsabilidad única (principio S de SOLID).
-# ============================================================
 
 class Libro:
     """Representa un libro en el catálogo. Solo gestiona su propio estado."""
@@ -94,16 +70,8 @@ class Multa:
         estado = "Pagada" if self.pagada else "Pendiente"
         return f"Multa | Usuario: {self.usuario.nombre} | Monto: ${self.monto} | {estado}"
 
-
-# ============================================================
 # PATRÓN: STRATEGY
 # CODE SMELL corregido: Duplicate Code + Magic Numbers
-# Antes: if/elif de tipo de usuario repetido en prestar_libro() Y devolver_libro(),
-#        con números mágicos mezclados en ambos métodos.
-# Solución: encapsular cada variante en su propia Strategy.
-#           Agregar un nuevo tipo (ej. "senior") = agregar una clase, sin modificar nada más.
-#           Esto cumple el principio O (Open/Closed) de SOLID.
-# ============================================================
 
 class EstrategiaUsuario(ABC):
     """Interfaz abstracta para la estrategia de préstamo/multa por tipo de usuario.
@@ -172,16 +140,8 @@ class Usuario:
         estado = "Activo" if self.activo else "Inactivo"
         return f"[{self.id}] {self.nombre} | Tipo: {self.tipo} | {estado}"
 
-
-# ============================================================
 # PATRÓN: OBSERVER
 # CODE SMELL corregido: Feature Envy
-# Antes: los métodos prestar_libro() y devolver_libro() imprimían notificaciones
-#        directamente — lógica de presentación mezclada con lógica de negocio.
-# Solución: un sistema Observer donde los "observadores" reaccionan a eventos
-#           del sistema sin que la lógica de negocio sepa cómo se notifica.
-#           Esto cumple el principio S (Single Responsibility) de SOLID.
-# ============================================================
 
 class ObservadorBiblioteca(ABC):
     """Interfaz abstracta para observadores de eventos de la biblioteca."""
@@ -215,16 +175,8 @@ class NotificadorConsola(ObservadorBiblioteca):
         print(f"  [NOTIFICACIÓN] Hola {prestamo.usuario.nombre}, "
               f"tienes una multa de ${multa.monto} pendiente por retraso.")
 
-
-# ============================================================
 # PATRÓN: SINGLETON
 # CODE SMELL corregido: God Class (parcial)
-# Antes: Biblioteca era una clase monolítica que también actuaba como
-#        repositorio único de datos, sin garantía de instancia única.
-# Solución: CatalogoBiblioteca es un Singleton que centraliza el estado
-#           del sistema. Solo puede existir una instancia durante la ejecución.
-#           Esto evita duplicación de datos y asegura consistencia global.
-# ============================================================
 
 class CatalogoBiblioteca:
     """
@@ -272,14 +224,8 @@ class CatalogoBiblioteca:
             for p in self.prestamos
         )
 
-
-# ============================================================
 # SERVICIO DE BIBLIOTECA
 # CODE SMELL corregido: God Class + Long Method
-# Antes: Biblioteca tenía métodos enormes que validaban, calculaban y notificaban.
-# Solución: ServicioBiblioteca coordina los modelos y delega responsabilidades.
-#           Principio S de SOLID: este servicio solo orquesta, no almacena estado.
-# ============================================================
 
 class ServicioBiblioteca:
     """
@@ -309,10 +255,7 @@ class ServicioBiblioteca:
         for obs in self._observadores:
             obs.on_devolucion_con_multa(prestamo, multa)
 
-    # --- Validaciones reutilizables ---
     # CODE SMELL corregido: Duplicate Code
-    # Antes: búsqueda y validación de usuario/libro repetida en prestar y devolver.
-    # Solución: métodos privados de validación llamados desde ambos flujos.
 
     def _validar_usuario(self, id_usuario: str) -> Optional[Usuario]:
         usuario = self.catalogo.buscar_usuario(id_usuario)
@@ -424,10 +367,6 @@ class ServicioBiblioteca:
         for m in self.catalogo.multas:
             print(f"  {m}")
 
-
-# ============================================================
-# PROGRAMA PRINCIPAL
-# ============================================================
 
 if __name__ == "__main__":
 
