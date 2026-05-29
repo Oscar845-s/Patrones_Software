@@ -1,9 +1,3 @@
-# ============================================================
-# SISTEMA DE GESTIÓN DE BIBLIOTECA — CÓDIGO ORIGINAL
-# Este archivo contiene el código SIN refactorizar.
-# Fue escrito de forma funcional pero con múltiples code smells.
-# ============================================================
-
 import datetime
 
 class Biblioteca:
@@ -226,9 +220,6 @@ class Biblioteca:
             print(f"Usuario: {m['id_usuario']} | Multa: ${m['monto']} | Estado: {estado}")
 
 
-# ============================================================
-# PROGRAMA PRINCIPAL
-# ============================================================
 
 if __name__ == "__main__":
     bib = Biblioteca()
