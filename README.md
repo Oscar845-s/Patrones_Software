@@ -26,7 +26,7 @@ python original/biblioteca_original.py
 python refactorizado/biblioteca_refactorizada.py
 ```
 
-Ambos producen la misma salida funcional ✅
+Ambos producen la misma salida funcional 
 
 ---
 
@@ -78,9 +78,9 @@ Ambos producen la misma salida funcional ✅
 ## Verificación de funcionalidad
 
 Ambas versiones proveen exactamente la misma funcionalidad:
-- ✅ Agregar libros y usuarios
-- ✅ Registrar préstamos con fecha límite según tipo de usuario
-- ✅ Registrar devoluciones y calcular multas por retraso
-- ✅ Bloquear préstamos a usuarios con préstamos vencidos
-- ✅ Mostrar catálogo, préstamos y multas
-- ✅ Notificaciones al usuario en cada operación
+-  Agregar libros y usuarios
+-  Registrar préstamos con fecha límite según tipo de usuario
+-  Registrar devoluciones y calcular multas por retraso
+-  Bloquear préstamos a usuarios con préstamos vencidos
+-  Mostrar catálogo, préstamos y multas
+-  Notificaciones al usuario en cada operación
